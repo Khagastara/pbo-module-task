@@ -33,7 +33,7 @@ namespace tugas1PBO
 
         public Mamalia(string nama, int umur, int jumlahKaki) : base(nama, umur)
         {
-            jumlahKaki = jumlahKaki;
+            this.jumlahKaki = jumlahKaki;
         }
         public override string Suara()
         {
@@ -51,7 +51,7 @@ namespace tugas1PBO
 
         public Reptil(string nama, int umur, double panjangTubuh) : base(nama, umur)
         {
-            panjangTubuh = panjangTubuh;
+            this.panjangTubuh = panjangTubuh;
         }
         public override string Suara()
         {
