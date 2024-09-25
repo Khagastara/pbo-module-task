@@ -1,0 +1,560 @@
+using System;
+using System.Security;
+using System.Security.Cryptography.X509Certificates;
+public class Elemental
+{
+    int NONE = 0;
+    int AQUA = 1;
+    int FIRE = 2;
+    int OWN;
+
+    public Elemental(int _choosen_element)
+    {
+        OWN = _choosen_element;
+    }
+
+    public int effect(int _opp_element)
+    {
+        /* ELEMENTAL DICTIONARY
+            * None > Aqua
+            * Aqua > Fire
+            * Fire > None
+            */
+
+        int diff = _opp_element - OWN;
+        if (diff == 0)
+        {
+            return 0;
+        }
+        else if (diff >= 1)
+        {
+            return -10;
+        }
+        else
+        {
+            return 10;
+        }
+    }
+    public int useElement()
+    {
+        return OWN;
+    }
+}
+public class Basic
+{
+    protected int ATK = 10;
+    protected int DEF = 10;
+    protected int SPD = 10;
+    protected int EXP = 0;
+    protected int HP = 100;
+    protected int MP = 100;
+
+    protected int baseMaxHP = 100;  // Base value for max HP
+    protected int baseMaxMP = 100;  // Base value for max MP
+
+    protected int currentMaxHP;     // Dynamically modified max HP
+    protected int currentMaxMP;     // Dynamically modified max MP
+
+    public Basic()
+    {
+        currentMaxHP = baseMaxHP;  // Start with baseMaxHP
+        currentMaxMP = baseMaxMP;  // Start with baseMaxMP
+    }
+
+    public virtual int attacking()
+    {
+        return ATK;
+    }
+
+    public virtual int blocking()
+    {
+        return DEF;
+    }
+
+    // Calculate damage
+    public void calculating_damage(int _dmg)
+    {
+        HP -= _dmg;
+        if (HP < 0)
+        {
+            HP = 0;  // Ensure HP doesn't go below zero
+        }
+    }
+
+    public int getHP()
+    {
+        return HP;
+    }
+
+    public int getMP()
+    {
+        return MP;
+    }
+
+    // Get current max HP
+    public int getMaxHP()
+    {
+        return currentMaxHP;
+    }
+
+    // Get current max MP
+    public int getMaxMP()
+    {
+        return currentMaxMP;
+    }
+
+    // Heal method
+    public void heal(int getHeal)
+    {
+        HP += getHeal;
+        if (HP > getMaxHP()) HP = getMaxHP();  // Ensure HP doesn't exceed maxHP
+    }
+
+    // Restore MP method
+    public void restoreMP(int getMana)
+    {
+        MP += getMana;
+        if (MP > getMaxMP()) MP = getMaxMP();  // Ensure MP doesn't exceed maxMP
+    }
+
+    // Increase max HP
+    public void increaseMaxHP(int extraHP)
+    {
+        currentMaxHP += extraHP;  // Increase the current max HP
+    }
+
+    // Increase max MP
+    public void increaseMaxMP(int extraMP)
+    {
+        currentMaxMP += extraMP;  // Increase the current max MP
+    }
+}
+
+public class Warrior : Basic
+{
+    int WEAPON_DMG = 50;
+    int ARMOR = 20;
+    Elemental ELEMENT;
+
+    public Warrior(int _element = 0, int _weapon_dmg = 10)
+    {
+        ELEMENT = new Elemental(_element);
+        WEAPON_DMG += _weapon_dmg;
+    }
+
+    public override int attacking()
+    {
+            return ATK + WEAPON_DMG;
+    }
+
+    public int attacking(int _opp_elemental)
+    {
+        return ATK + WEAPON_DMG + ELEMENT.effect(_opp_elemental);
+    }
+
+     public override int blocking()
+     {
+        return DEF + ARMOR;
+     }
+}
+
+public class Archer : Basic
+{
+    int BOW_DMG = 30;
+    int AGILITY = 6;
+    Elemental ELEMENT;
+
+    public Archer(int _element = 0, int _bow_dmg = 15)
+    {
+        ELEMENT = new Elemental(_element);
+        BOW_DMG += _bow_dmg;
+    }
+
+    public override int attacking()
+    {
+    return ATK + BOW_DMG;
+    }
+
+    public int attacking(int _opp_element)
+    {
+        return ATK + BOW_DMG + ELEMENT.effect(_opp_element);
+    }
+
+    public override int blocking()
+    {
+        return DEF;
+    }
+}
+
+public class Sorceress : Basic
+{
+    int MAGIC_DMG = 30;
+    int MAGIC_SHIELD = 10;
+    int ORB = 40;
+
+    public Sorceress(int _magic_dmg = 15)
+    {
+        MAGIC_DMG += _magic_dmg;
+    }
+    public override int attacking()
+    {
+        return ATK + MAGIC_DMG;
+    }
+    public int attacking(int elementType, int _opp_element)
+    {
+
+        if (elementType == 1)
+        {
+            if (MP >= 10)
+            {
+                Console.WriteLine("Sorceress uses Aqua attack");
+                MP -= 10;
+                return ATK + MAGIC_DMG;
+            }
+            else
+            {
+                Console.WriteLine("Sorceress doesn't have enough mana");
+                Console.WriteLine("Sorceress uses basic attack");
+                return ATK;
+            }
+        }
+        // Fire Attack
+        else if (elementType == 2)
+        {
+            if (MP >= 8)
+            {
+                Console.WriteLine("Sorceress uses Fire attack");
+                MP -= 8;
+                return ATK + MAGIC_DMG;
+            }
+            else
+            {
+                Console.WriteLine("Sorceress doesn't have enough mana");
+                Console.WriteLine("Sorceress uses basic attack");
+                return ATK;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Sorceress uses basic attack");
+            return ATK;
+        }
+    }
+
+    public override int blocking()
+    {
+        return DEF + MAGIC_SHIELD;
+    }
+    public int maxMP()
+    {
+        return MP + ORB;
+    }
+}
+
+public class Cleric : Basic
+{
+    int MACE_DMG = 10;
+    int SHIELD = 20;
+    int PENDANT = 20; 
+    public Cleric()
+    {
+        increaseMaxHP(PENDANT);
+        increaseMaxMP(PENDANT);
+
+        HP = getMaxHP();
+        MP = getMaxMP();
+    }
+
+    public override int attacking()
+    {
+        return ATK + MACE_DMG;
+    }
+
+    public override int blocking()
+    {
+        return DEF + SHIELD;
+    }
+    public void heal(Basic[] team, int index = -1)
+    {
+        if (index == -1)
+        {
+            if (MP >= 50)
+            {
+                foreach (Basic ally in team)
+                {
+                    MP -= 15;
+                    ally.heal(20);
+                }
+                Console.WriteLine("Cleric heals all allies");
+            }
+            else
+            {
+                Console.WriteLine("Cleric doesn't have enough Mana");
+            }
+        }
+        else if (index >= 0 && index < team.Length)
+        {
+            if (MP >= 20)
+            {
+                MP -= 20;
+                Console.WriteLine($"Cleric heals {index + 1}");
+                team[index].heal(30);
+            }
+            else
+            {
+                Console.WriteLine("Cleric doesn't have enough Mana");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid");
+        }
+    }
+}
+public class Opponent
+{
+        private int ATK = 30;
+        private int DEF = 50;
+        private int HP = 5000;
+
+        public int attacking()
+        {
+            return ATK;
+        }
+
+        public int blocking()
+        {
+            return DEF;
+        }
+
+        public void calculating_damage(int _dmg)
+        {
+            HP -= _dmg;
+        }
+
+        public int getHP()
+        {
+            return HP;
+        }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Team Setup
+        Basic warrior = new Warrior();
+        Basic archer = new Archer();
+        Basic sorceress = new Sorceress();
+        Cleric cleric = new Cleric();
+
+        Basic[] team = { warrior, archer, sorceress, cleric };
+
+        Opponent opponent = new Opponent();
+
+        string[] actions = { "Attack", "Block", "Heal" };
+
+        var rand = new Random();
+        bool gameOver = false;
+
+        while (!gameOver)
+        {
+            int selectedHeroIndex;
+            do
+            {
+                Console.WriteLine("\nTeam Status:");
+                for (int i = 0; i < team.Length; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {team[i].GetType().Name}");
+                    Console.WriteLine($"   HP: {team[i].getHP()}");
+                    Console.WriteLine($"   MP: {team[i].getMP()}");
+                    Console.WriteLine();
+                }
+                Console.WriteLine("\nOpponent HP: " + opponent.getHP());
+                Console.WriteLine();
+
+                Console.WriteLine("\nSelect an ally to act (1. Warrior, 2. Archer, 3. Sorceress, 4. Cleric): ");
+                selectedHeroIndex = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                if (selectedHeroIndex < 0 || selectedHeroIndex >= team.Length || team[selectedHeroIndex].getHP() <= 0)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Invalid or dead hero choice! Try again.");
+                    selectedHeroIndex = -1;
+                }
+            }
+            while (selectedHeroIndex == -1);
+
+            Basic selectedHero = team[selectedHeroIndex];
+
+            if (selectedHero is Sorceress selectedSorceress)
+            {
+                Console.WriteLine("Choose action: 0. Aqua Attack, 1. Fire Attack, 2. Block");
+                int sorceressAction = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+
+                if (sorceressAction == 1)
+                {
+                    int oppElement = opponent.getHP() % 3;
+                    int dmg = selectedSorceress.attacking(1, oppElement); // 1 = Aqua element
+                    Console.WriteLine($"Sorceress deals {dmg} Aqua damage!");
+                    opponent.calculating_damage(dmg);
+                }
+                else if (sorceressAction == 1)
+                {
+                    int oppElement = opponent.getHP() % 3;
+                    int dmg = selectedSorceress.attacking(2, oppElement); // 2 = Fire element
+                    Console.WriteLine($"Sorceress deals {dmg} Fire damage!");
+                    opponent.calculating_damage(dmg);
+                }
+                else
+                {
+                    PerformAction(selectedHero, sorceressAction, opponent, rand);
+                }
+            }
+
+            else if (selectedHero is Cleric selectedCleric)
+            {
+                Console.WriteLine("Choose action: 0. Attack, 1. Block, 2. Heal");
+                int clericAction = Convert.ToInt32(Console.ReadLine());
+
+                if (clericAction == 2)
+                {
+                    Console.Clear();
+
+                    Console.WriteLine("To who does Cleric want to heal?");
+
+                    for (int i = 0; i < team.Length; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. {team[i].GetType().Name} (HP: {team[i].getHP()})");
+                    }
+
+                    Console.WriteLine($"{team.Length + 1}. Heal all team members");
+                    int healIndex = Convert.ToInt32(Console.ReadLine()) - 1;
+
+                    Console.Clear();
+
+                    if (healIndex == team.Length)
+                    {
+                        selectedCleric.heal(team, -1);
+                        Console.WriteLine("Cleric heals the entire team.");
+                    }
+                    else if (healIndex >= 0 && healIndex < team.Length)
+                    {
+                        selectedCleric.heal(team, healIndex);
+                        Console.WriteLine($"Cleric heals {team[healIndex].GetType().Name}.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid choice!");
+                    }
+                }
+                else
+                {
+                    // Attack or Block
+                    PerformAction(selectedHero, clericAction, opponent, rand);
+                }
+            }
+
+            else
+            {
+                // Attack or Block for Warrior and Archer
+                Console.WriteLine("Choose action: 0. Attack, 1. Block");
+
+                int heroAction = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();
+                PerformAction(selectedHero, heroAction, opponent, rand);
+            }
+
+            // Opponent turn (random attack/block)
+            if (!gameOver)
+            {
+                Basic heroTarget;
+                int heroIndex;
+                do
+                {
+                    heroIndex = rand.Next(0, team.Length);
+                    heroTarget = team[heroIndex];
+                } while (heroTarget.getHP() <= 0);
+
+                int oppAction = rand.Next(0, 2);
+
+                if (oppAction == 0)
+                {
+                    int oppDmg = opponent.attacking();
+                    heroTarget.calculating_damage(oppDmg);
+                    Console.WriteLine($"Opponent attacks {heroTarget.GetType().Name} for {oppDmg} damage!");
+                }
+                else
+                {
+                    Console.WriteLine("Opponent blocks!");
+                }
+
+                // Check if all heroes are defeated
+                gameOver = CheckTeamStatus(team);
+                if (gameOver)
+                {
+                    Console.WriteLine("All heroes are defeated. Game over!");
+                    break;
+                }
+
+                // Check if opponent is defeated
+                if (opponent.getHP() <= 0)
+                {
+                    Console.WriteLine("Opponent is defeated. You win!");
+                    gameOver = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    static void PerformAction(Basic hero, int action, Opponent opponent, Random rand)
+    {
+        if (action == 0) // Attack
+        {
+            int oppElement = rand.Next(0, 3);
+
+            if (hero is Warrior warrior)
+            {
+                int dmg = warrior.attacking(oppElement);
+                opponent.calculating_damage(dmg);
+                Console.WriteLine($"Warrior deals {dmg} damage!");
+            }
+            else if (hero is Archer archer)
+            {
+                int dmg = archer.attacking(oppElement);
+                opponent.calculating_damage(dmg);
+                Console.WriteLine($"Archer deals {dmg} damage!");
+            }
+            else if (hero is Sorceress sorceress)
+            {
+                int dmg = sorceress.attacking();
+                opponent.calculating_damage(dmg);
+                Console.WriteLine($"Sorceress deals {dmg} damage!");
+            }
+            else
+            {
+                int dmg = hero.attacking();
+                opponent.calculating_damage(dmg);
+                Console.WriteLine($"{hero.GetType().Name} deals {dmg} damage!");
+            }
+        }
+        else
+        {
+            Console.WriteLine($"{hero.GetType().Name} blocks!");
+        }
+    }
+
+    static bool CheckTeamStatus(Basic[] team)
+    {
+        foreach (var hero in team)
+        {
+            if (hero.getHP() > 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}
