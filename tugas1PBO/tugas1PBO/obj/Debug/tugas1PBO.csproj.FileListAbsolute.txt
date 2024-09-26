@@ -1,0 +1,7 @@
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\bin\Debug\tugas1PBO.exe.config
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\bin\Debug\tugas1PBO.exe
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\bin\Debug\tugas1PBO.pdb
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\obj\Debug\tugas1PBO.csproj.AssemblyReference.cache
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\obj\Debug\tugas1PBO.csproj.CoreCompileInputs.cache
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\obj\Debug\tugas1PBO.exe
+C:\Users\Owner\Documents\Materi Kuliah SI\Semester 3\Pemrograman Berorientasi Obyek\Praktikum\Tugas Polymorphism\tugas1PBO\tugas1PBO\obj\Debug\tugas1PBO.pdb
