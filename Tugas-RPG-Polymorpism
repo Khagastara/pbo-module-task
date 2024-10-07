@@ -393,7 +393,7 @@ class Program
                 int sorceressAction = Convert.ToInt32(Console.ReadLine());
                 Console.Clear();
 
-                if (sorceressAction == 1)
+                if (sorceressAction == 0)
                 {
                     int oppElement = opponent.getHP() % 3;
                     int dmg = selectedSorceress.attacking(1, oppElement); // 1 = Aqua element
